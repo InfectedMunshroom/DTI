@@ -3,31 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Entrepreneur-Startup Openings - Bennett University</title>
+    <title>Entrepreneur-Startup Openings</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <a href="profile.html" class="profile-btn">Profile</a>
+
     <header>
-        <h1>Bennett University</h1>
-        <nav>
-            <ul>
-                <li><a href="index.html">Student Community</a></li>
-                <li><a href="ra-positions.html">RA Positions</a></li>
-                <li><a href="entrepreneur-openings.html">Entrepreneur-Startup Openings</a></li>
-                <li><a href="hatchery-openings.html">Hatchery Openings</a></li>
-            </ul>
-        </nav>
+        <h1>Startup Openings</h1>
     </header>
+    <nav>
+        <a href="index.html">Student Community</a>
+        <a href="ra-positions.html">Research & Faculty Led Project Positions</a>
+        <a href="entrepreneur-openings.html">Startup Openings</a>
+        <a href="hatchery-openings.html">Hatchery based Startup Openings</a>
+    </nav>
+    
+    <div class="container">
+        <h2>Startup Jobs & Internships</h2>
+        <div class="job-box">
+            <h3>Software Developer Intern</h3>
+            <p>Join an early-stage startup and build web applications.</p>
+        </div>
+        <div class="job-box">
+            <h3>Marketing & Growth Specialist</h3>
+            <p>Help scale startups with innovative marketing strategies.</p>
+        </div>
+    </div>
 
-    <main>
-        <section>
-            <h2>Entrepreneur-Startup Openings</h2>
-            <p>Discover opportunities to launch your startup or join entrepreneurial ventures at Bennett University.</p>
-        </section>
-    </main>
+    <!-- Carousel Section -->
+    <div class="carousel-section">
+        <h2>Upcoming Jobs from Alumni & Student-led Startups</h2>
+        <div class="carousel-container">
+            <button class="carousel-btn left" onclick="moveSlide(-1)">&#10094;</button>
+            <div class="carousel">
+                <div class="carousel-track">
+                    <div class="carousel-card">
+                        <img src="/mnt/Disk_2/DTI/images/images.png" alt="Startup Job 1">
+                        <h3>Full-Stack Developer</h3>
+                        <p>Work with an AI-driven startup founded by BU alumni.</p>
+                    </div>
+                    <div class="carousel-card">
+                        <img src="/mnt/Disk_2/DTI/images/images.jpeg" alt="Startup Job 2">
+                        <h3>Marketing Strategist</h3>
+                        <p>Join a fast-growing e-commerce startup by BU students.</p>
+                    </div>
+                    <div class="carousel-card">
+                        <img src="/mnt/Disk_2/DTI/images/Industrial-workshop-on-Blockchain-E41.jpg" alt="Startup Job 3">
+                        <h3>Cybersecurity Analyst</h3>
+                        <p>Be part of a fintech security firm by BU alumni.</p>
+                    </div>
+                    <div class="carousel-card">
+                        <img src="/mnt/Disk_2/DTI/images/top-startups-in-pune.jpg" alt="Startup Job 4">
+                        <h3>Data Scientist</h3>
+                        <p>Analyze big data for a growing AI startup.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-btn right" onclick="moveSlide(1)">&#10095;</button>
+        </div>
+    </div>
 
-    <footer>
-        <p>&copy; 2023 Bennett University. All rights reserved.</p>
-    </footer>
+    <script>
+        let index = 0;
+        const track = document.querySelector('.carousel-track');
+        const totalSlides = document.querySelectorAll('.carousel-card').length;
+
+        function moveSlide(direction) {
+            index += direction;
+            if (index < 0) index = totalSlides - 1;
+            if (index >= totalSlides) index = 0;
+            track.style.transform = `translateX(${-index * 100}%)`;
+        }
+
+        setInterval(() => moveSlide(1), 4000); // Auto-slide every 4 seconds
+    </script>
 </body>
 </html>
