@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -68,8 +69,10 @@ func main() {
 	connectDB()
 
 	r := mux.NewRouter()
+
 	r.HandleFunc("/profile/{id}", getProfile).Methods("GET")
 	r.HandleFunc("/profile", createProfile).Methods("POST")
+	log.Fatal(http.ListenAndServe(":8080", cors.AllowAll().Handler(r)))
 
 	log.Println("Server started on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
