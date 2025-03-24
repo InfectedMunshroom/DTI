@@ -72,7 +72,7 @@ func main() {
 
 	r.HandleFunc("/profile/{id}", getProfile).Methods("GET")
 	r.HandleFunc("/profile", createProfile).Methods("POST")
-	log.Fatal(http.ListenAndServe(":8080", cors.AllowAll().Handler(r)))
+	log.Fatal(http.ListenAndServe(":8081", cors.AllowAll().Handler(r)))
 
 	log.Println("Server started on http://localhost:8080")
 	log.Fatal(http.ListenAndServe(":8080", r))
