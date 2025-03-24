@@ -7,7 +7,7 @@ export default function StudentProfile() {
   const [profile, setProfile] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8080/profile/123") // Replace '123' with actual ID
+    fetch("http://localhost:8080/profile/123")
       .then((res) => res.json())
       .then((data) => setProfile(data))
       .catch((err) => console.error("Error fetching profile:", err));
