@@ -3,6 +3,8 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -71,7 +73,15 @@ func serveStaticFiles(nextDir string) http.Handler {
 }
 
 func main() {
+	// Define flags for IP and Port
+	ip := flag.String("ip", "0.0.0.0", "IP address to bind the server")
+	port := flag.String("port", "8080", "Port number to run the server")
+	flag.Parse()
+
+	// Connect to MongoDB
 	connectDB()
+
+	// Set up router
 	r := mux.NewRouter()
 
 	// API Routes
@@ -82,14 +92,24 @@ func main() {
 	r.PathPrefix("/").Handler(serveStaticFiles(nextDir))
 
 	// Enable CORS
+	// c := cors.New(cors.Options{
+	// 	AllowedOrigins:   []string{"http://localhost:3000"}, // Change this if deployed
+	// 	AllowCredentials: true,
+	// 	AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
+	// 	AllowedHeaders:   []string{"Content-Type"},
+	// })
+
+	// c := cors.AllowAll()
+
 	c := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"}, // Change this if deployed
+		AllowedOrigins:   []string{"http://localhost:3000", "http://10.12.108.251:8080"}, // ✅ Allow frontend IP
 		AllowCredentials: true,
 		AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
 		AllowedHeaders:   []string{"Content-Type"},
 	})
 
-	port := "8080"
-	log.Println("🚀 Server running at http://localhost:" + port)
-	log.Fatal(http.ListenAndServe(":"+port, c.Handler(r)))
+	// Start server with flags
+	address := fmt.Sprintf("%s:%s", *ip, *port)
+	log.Printf("🚀 Server running at http://%s\n", address)
+	log.Fatal(http.ListenAndServe(address, c.Handler(r)))
 }
