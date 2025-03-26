@@ -43,10 +43,10 @@ func connectDB() {
 // Fetch Profile by ID
 func getProfile(w http.ResponseWriter, r *http.Request) {
 	params := mux.Vars(r)
-	id := params["id"] // ID is received as a string
+	id := params["id"]
 
 	var profile Profile
-	filter := bson.M{"id": id} // Ensure it's matched as a string
+	filter := bson.M{"id": id}
 
 	err := collection.FindOne(context.TODO(), filter).Decode(&profile)
 	if err != nil {
@@ -90,16 +90,6 @@ func main() {
 	// Serve Next.js exported files
 	nextDir := "/mnt/Disk_2/DTI/dti/out"
 	r.PathPrefix("/").Handler(serveStaticFiles(nextDir))
-
-	// Enable CORS
-	// c := cors.New(cors.Options{
-	// 	AllowedOrigins:   []string{"http://localhost:3000"}, // Change this if deployed
-	// 	AllowCredentials: true,
-	// 	AllowedMethods:   []string{"GET", "POST", "OPTIONS"},
-	// 	AllowedHeaders:   []string{"Content-Type"},
-	// })
-
-	// c := cors.AllowAll()
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:3000", "http://10.12.108.251:8080"}, // ✅ Allow frontend IP
