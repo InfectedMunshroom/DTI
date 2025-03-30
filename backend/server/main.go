@@ -7,8 +7,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
-	"path/filepath"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
@@ -58,20 +56,6 @@ func getProfile(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(profile)
 }
 
-// Serve Next.js Static Files
-func serveStaticFiles(nextDir string) http.Handler {
-	fs := http.FileServer(http.Dir(nextDir))
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		path := filepath.Join(nextDir, r.URL.Path)
-		_, err := os.Stat(path)
-		if os.IsNotExist(err) {
-			http.ServeFile(w, r, filepath.Join(nextDir, "index.html"))
-			return
-		}
-		fs.ServeHTTP(w, r)
-	})
-}
-
 func main() {
 	// Define flags for IP and Port
 	ip := flag.String("ip", "0.0.0.0", "IP address to bind the server")
@@ -83,13 +67,7 @@ func main() {
 
 	// Set up router
 	r := mux.NewRouter()
-
-	// API Routes
 	r.HandleFunc("/profile/{id}", getProfile).Methods("GET")
-
-	// Serve Next.js exported files
-	nextDir := "/mnt/Disk_2/DTI/dti/out"
-	r.PathPrefix("/").Handler(serveStaticFiles(nextDir))
 
 	c := cors.New(cors.Options{
 		AllowedOrigins:   []string{"http://localhost:3000", "http://10.12.108.251:8080"}, // ✅ Allow frontend IP
@@ -100,6 +78,6 @@ func main() {
 
 	// Start server with flags
 	address := fmt.Sprintf("%s:%s", *ip, *port)
-	log.Printf("🚀 Server running at http://%s\n", address)
+	log.Printf("🚀 API Server running at http://%s", address)
 	log.Fatal(http.ListenAndServe(address, c.Handler(r)))
 }

@@ -14,9 +14,9 @@ export default function Home() {
       {/* Navigation Links */}
       <div className="bg-blue-900 text-white py-2 px-4 flex space-x-6 justify-center">
         <a href="#" className="hover:underline">Student Community</a>
-        <a href="#" className="hover:underline">Research & Faculty Projects</a>
-        <a href="#" className="hover:underline">Startup Openings</a>
-        <a href="#" className="hover:underline">Hatchery-based Startup Openings</a>
+        <a href="/researchAndFaculty" className="hover:underline">Research & Faculty Projects</a>
+        <a href="/startupBased" className="hover:underline">Startup Openings</a>
+        <a href="/hatcheyBased" className="hover:underline">Hatchery-based Startup Openings</a>
       </div>
 
       {/* Latest Student Community Posts */}

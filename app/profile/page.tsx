@@ -3,17 +3,26 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 
+interface Profile {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  skills: string[];
+  projects: string[];
+}
+
 export default function StudentProfile() {
-  const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
-    fetch("http://10.12.108.251:8080/profile/123")
+    fetch("http://localhost:8080/profile/123")
       .then((res) => res.json())
-      .then((data) => setProfile(data))
+      .then((data: Profile) => setProfile(data))
       .catch((err) => console.error("Error fetching profile:", err));
   }, []);
 
-  if (!profile) return <p className="text-center">Loading</p>;
+  if (!profile) return <p className="text-center">Loading...</p>;
 
   return (
     <div className="min-h-screen flex flex-col">
