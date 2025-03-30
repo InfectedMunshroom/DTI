@@ -16,7 +16,7 @@ export default function Home() {
         <a href="#" className="hover:underline">Student Community</a>
         <a href="/researchAndFaculty" className="hover:underline">Research & Faculty Projects</a>
         <a href="/startupBased" className="hover:underline">Startup Openings</a>
-        <a href="/hatcheyBased" className="hover:underline">Hatchery-based Startup Openings</a>
+        <a href="/hatcheryBased" className="hover:underline">Hatchery-based Startup Openings</a>
       </div>
 
       {/* Latest Student Community Posts */}

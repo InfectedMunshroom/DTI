@@ -15,26 +15,25 @@ export default function ResearchFacultyPositionsPage() {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header Section */}
-      <header className="bg-red-600 text-white py-4">
-        <div className="container mx-auto text-center">
-          <h1 className="text-3xl font-bold">Research & Faculty Led Project Positions</h1>
-        </div>
-      </header>
-
+    <div>
       {/* Navbar */}
-      <nav className="bg-blue-900 text-white py-2">
-        <ul className="flex justify-center space-x-8">
-          <li className="cursor-pointer hover:underline">Student Community</li>
-          <li className="cursor-pointer hover:underline">Research & Faculty Led Project Positions</li>
-          <li className="cursor-pointer hover:underline">Startup Openings</li>
-          <li className="cursor-pointer hover:underline">Hatchery Based Startup Openings</li>
-        </ul>
+      <nav className="bg-red-600 p-4 flex justify-between items-center">
+        <h1 className="text-white text-2xl font-bold">Research & Faculty Led Project Positions</h1>
+        <Link href="/profile">
+          <button className="bg-blue-800 text-white px-4 py-2 rounded">Profile</button>
+        </Link>
       </nav>
 
+      {/* Navigation Links */}
+      <div className="bg-blue-900 text-white py-2 px-4 flex space-x-6 justify-center">
+        <Link href="/" className="hover:underline">Student Community</Link>
+        <Link href="/researchAndFaculty" className="hover:underline">Research & Faculty Projects</Link>
+        <Link href="/startupBased" className="hover:underline">Startup Openings</Link>
+        <Link href="/hatcheryBased" className="hover:underline">Hatchery-based Startup Openings</Link>
+      </div>
+
       {/* Position Listings */}
-      <section className="my-8">
+      <section className="py-8 px-6">
         <h2 className="text-2xl font-bold mb-4">Current Openings</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {positions.map((position, index) => (
