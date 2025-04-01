@@ -53,13 +53,18 @@ func main() {
 	// Create a new router
 	r := mux.NewRouter()
 
-	// Define routes
+	// Routes for handling login
 	r.HandleFunc("/login", loginHandler).Methods("POST")
 	r.HandleFunc("/profile", profileHandler).Methods("GET")
 
+	// Routes to fetch profils
 	r.HandleFunc("/student/profile", student.GetStudentProfile(client, jwtKey)).Methods("GET")
 	r.HandleFunc("/poster/profile", poster.GetPosterProfile(client, jwtKey)).Methods("GET")
 	r.HandleFunc("/student/community", common.FetchActivePosts(client)).Methods("GET")
+
+	// Route to upload CVs
+	r.HandleFunc("/student/upload-cv", student.UploadCV(client, jwtKey)).Methods("POST")
+	r.HandleFunc("/student/cv-status", student.CheckCVStatus(client, jwtKey)).Methods("GET")
 
 	// Dynamic ID route for events
 	r.HandleFunc("/student/community/event/{id}", common.GetEventByID(client)).Methods("GET")
