@@ -54,20 +54,22 @@ func main() {
 	r := mux.NewRouter()
 
 	// Define routes
-	r.HandleFunc("/login", middleware.EnableCORS(loginHandler)).Methods("POST")
-	r.HandleFunc("/profile", middleware.EnableCORS(profileHandler)).Methods("GET")
+	r.HandleFunc("/login", loginHandler).Methods("POST")
+	r.HandleFunc("/profile", profileHandler).Methods("GET")
 
-	r.HandleFunc("/student/profile", middleware.EnableCORS(student.GetStudentProfile(client, jwtKey))).Methods("GET")
-	r.HandleFunc("/poster/profile", middleware.EnableCORS(poster.GetPosterProfile(client, jwtKey))).Methods("GET")
+	r.HandleFunc("/student/profile", student.GetStudentProfile(client, jwtKey)).Methods("GET")
+	r.HandleFunc("/poster/profile", poster.GetPosterProfile(client, jwtKey)).Methods("GET")
+	r.HandleFunc("/student/community", common.FetchActivePosts(client)).Methods("GET")
 
-	r.HandleFunc("/student/community", middleware.EnableCORS(common.FetchActivePosts(client))).Methods("GET")
+	// Dynamic ID route for events
+	r.HandleFunc("/student/community/event/{id}", common.GetEventByID(client)).Methods("GET")
 
-	// ✅ Fix: Use mux for dynamic ID route
-	r.HandleFunc("/student/community/event/{id}", middleware.EnableCORS(common.GetEventByID(client))).Methods("GET")
+	// ✅ Apply global CORS middleware
+	handler := middleware.EnableCORS(r)
 
 	// Start the server
 	log.Println("Server running on port 8080")
-	http.ListenAndServe(":8080", r)
+	http.ListenAndServe(":8080", handler)
 }
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
