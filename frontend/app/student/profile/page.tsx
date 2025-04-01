@@ -137,6 +137,12 @@ export default function StudentProfile() {
           </button>
           {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
         </div>
+        {/* Create Post Section*/}
+        <Link href="/student/create-post">
+          <button className="mt-6 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+            Create a Post
+          </button>
+        </Link>
       </main>
     </div>
   );

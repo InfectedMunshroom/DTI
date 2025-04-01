@@ -69,6 +69,9 @@ func main() {
 	// Dynamic ID route for events
 	r.HandleFunc("/student/community/event/{id}", common.GetEventByID(client)).Methods("GET")
 
+	// Route to post to student community
+	r.HandleFunc("/student/create-post", student.CreatePostHandler(client, jwtKey)).Methods("POST")
+
 	// ✅ Apply global CORS middleware
 	handler := middleware.EnableCORS(r)
 
