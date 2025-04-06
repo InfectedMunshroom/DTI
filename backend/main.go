@@ -60,17 +60,24 @@ func main() {
 	// Routes to fetch profils
 	r.HandleFunc("/student/profile", student.GetStudentProfile(client, jwtKey)).Methods("GET")
 	r.HandleFunc("/poster/profile", poster.GetPosterProfile(client, jwtKey)).Methods("GET")
-	r.HandleFunc("/student/community", common.FetchActivePosts(client)).Methods("GET")
+	r.HandleFunc("/student/community", common.FetchActivePosts(client, 0)).Methods("GET")
+	r.HandleFunc("/student/ra", common.FetchActivePosts(client, 1)).Methods("GET")
+	r.HandleFunc("/student/internships", common.FetchActivePosts(client, 2)).Methods("GET")
+	r.HandleFunc("/student/hatchery", common.FetchActivePosts(client, 3)).Methods("GET")
 
 	// Route to upload CVs
 	r.HandleFunc("/student/upload-cv", student.UploadCV(client, jwtKey)).Methods("POST")
 	r.HandleFunc("/student/cv-status", student.CheckCVStatus(client, jwtKey)).Methods("GET")
 
 	// Dynamic ID route for events
-	r.HandleFunc("/student/community/event/{id}", common.GetEventByID(client)).Methods("GET")
+	r.HandleFunc("/student/community/event/{id}", common.GetEventByID(client, 0)).Methods("GET")
+	r.HandleFunc("/student/ra/event/{id}", common.GetEventByID(client, 1)).Methods("GET")
+	r.HandleFunc("/student/internships/event/{id}", common.GetEventByID(client, 2)).Methods("GET")
+	r.HandleFunc("/student/hatchery/event/{id}", common.GetEventByID(client, 3)).Methods("GET")
 
-	// Route to post to student community
+	// Route handle post creation and it's display onto the student's profile page
 	r.HandleFunc("/student/create-post", student.CreatePostHandler(client, jwtKey)).Methods("POST")
+	r.HandleFunc("/student/my-posts", student.GetMyPostsHandler(client, jwtKey)).Methods("GET")
 
 	// ✅ Apply global CORS middleware
 	handler := middleware.EnableCORS(r)

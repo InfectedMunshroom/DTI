@@ -13,9 +13,20 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func GetEventByID(client *mongo.Client) http.HandlerFunc {
+func GetEventByID(client *mongo.Client, selection int) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
+		var database string
+
+		if selection == 0 {
+			database = "studentCommunity"
+		} else if selection == 1 {
+			database = "researchPage"
+		} else if selection == 2 {
+			database = "internPage"
+		} else if selection == 3 {
+			database = "hatcheryPage"
+		}
 
 		params := mux.Vars(r)
 		eventID := params["id"]
@@ -37,7 +48,7 @@ func GetEventByID(client *mongo.Client) http.HandlerFunc {
 		}
 
 		// Connect to MongoDB collection
-		collection := client.Database("studentCommunity").Collection("active_post")
+		collection := client.Database(database).Collection("active_post")
 
 		// Find the event by ObjectID
 		var event bson.M

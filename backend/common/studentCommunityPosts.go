@@ -13,8 +13,20 @@ import (
 )
 
 // FetchActivePosts fetches active posts with pagination
-func FetchActivePosts(client *mongo.Client) http.HandlerFunc {
+func FetchActivePosts(client *mongo.Client, selection int) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		// Select database to be used
+		var database string
+		if selection == 0 {
+			database = "studentCommunity"
+		} else if selection == 1 {
+			database = "researchPage"
+		} else if selection == 2 {
+			database = "internPage"
+		} else if selection == 3 {
+			database = "hatcheryPage"
+		}
+
 		// Parse query parameters
 		page, _ := strconv.Atoi(r.URL.Query().Get("page"))
 		limit, _ := strconv.Atoi(r.URL.Query().Get("limit"))
@@ -32,7 +44,7 @@ func FetchActivePosts(client *mongo.Client) http.HandlerFunc {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
-		collection := client.Database("studentCommunity").Collection("active_post")
+		collection := client.Database(database).Collection("active_post")
 
 		filter := bson.M{"state": "Active"}
 		opts := options.Find().SetSkip(int64(skip)).SetLimit(int64(limit))

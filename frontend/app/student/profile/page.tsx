@@ -14,6 +14,14 @@ interface Profile {
   projects: string[];
 }
 
+interface Post {
+  _id: string;
+  title: string;
+  description: string;
+  state: string;
+  timestamp?: string; // optional, if your backend sends one
+}
+
 export default function StudentProfile() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -21,6 +29,8 @@ export default function StudentProfile() {
   const [uploading, setUploading] = useState(false);
   const [message, setMessage] = useState("");
   const [cvExists, setCvExists] = useState<boolean | null>(null);
+  const [posts, setPosts] = useState<Post[]>([]);
+  const [postsLoading, setPostsLoading] = useState(false);
 
   useEffect(() => {
     // Fetch profile
@@ -29,6 +39,9 @@ export default function StudentProfile() {
       .then((data: Profile) => {
         setProfile(data);
         setLoading(false);
+
+        // Once profile is fetched, use email to fetch posts
+        fetchPosts(data.email);
       })
       .catch((err) => {
         console.error("Error fetching profile:", err);
@@ -43,6 +56,22 @@ export default function StudentProfile() {
       })
       .catch((err) => console.error("Error fetching CV status:", err));
   }, []);
+
+  const fetchPosts = (email: string) => {
+    setPostsLoading(true);
+    fetch(`http://localhost:8080/student/my-posts?email=${encodeURIComponent(email)}`, {
+      credentials: "include",
+    })
+      .then((res) => res.json())
+      .then((data: Post[]) => {
+        setPosts(data);
+        setPostsLoading(false);
+      })
+      .catch((err) => {
+        console.error("Error fetching posts:", err);
+        setPostsLoading(false);
+      });
+  };
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -126,7 +155,7 @@ export default function StudentProfile() {
             accept=".pdf"
             className="mt-2 border p-2 rounded w-full"
             onChange={handleFileChange}
-            disabled={cvExists || uploading} // Disable if CV exists or is uploading
+            disabled={cvExists || uploading}
           />
           <button
             className={`mt-3 px-4 py-2 rounded text-white ${cvExists || uploading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
@@ -137,12 +166,33 @@ export default function StudentProfile() {
           </button>
           {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
         </div>
-        {/* Create Post Section*/}
+
+        {/* Create Post Section */}
         <Link href="/student/create-post">
           <button className="mt-6 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
             Create a Post
           </button>
         </Link>
+
+        {/* Posts Section */}
+        <div className="mt-10">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">Your Posts</h3>
+          {postsLoading ? (
+            <p>Loading your posts...</p>
+          ) : posts.length === 0 ? (
+            <p className="text-gray-500">You haven't created any posts yet.</p>
+          ) : (
+            <ul className="space-y-4">
+              {posts.map((post) => (
+                <li key={post._id} className="border border-gray-200 p-4 rounded shadow-sm">
+                  <h4 className="text-lg font-bold text-gray-800">{post.title}</h4>
+                  <p className="text-gray-600">{post.description}</p>
+                  <p className="text-sm text-gray-400 mt-2">State: {post.state}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </main>
     </div>
   );
