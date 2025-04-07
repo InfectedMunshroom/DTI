@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 export default function CreatePost() {
   const router = useRouter();
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+  const [description, setDescription] = useState("")
+  const [category, setCategory] = useState("researchPage")
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -16,16 +17,16 @@ export default function CreatePost() {
     setMessage("");
 
     try {
-      const response = await fetch("http://localhost:8080/student/create-post", {
+      const response = await fetch("http://localhost:8080/poster/create-post", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ title, description }),
+        body: JSON.stringify({ title, description, category}),
       });
 
       if (response.ok) {
         setMessage("✅ Post created successfully!");
-        setTimeout(() => router.push("/student/community"), 1500);
+        setTimeout(() => router.push("/poster/community"), 1500);
       } else {
         setMessage("❌ Failed to create post.");
       }
@@ -64,6 +65,18 @@ export default function CreatePost() {
               required
             ></textarea>
           </div>
+          <div>
+          <label className="block mb-1">Category</label>
+          <select
+            className="w-full border rounded px-3 py-2"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option value="researchPage">RA</option>
+            <option value="internPage">Internship</option>
+            <option value="hatcheryPage">Hatchery</option>
+          </select>
+        </div>
 
           <button
             type="submit"

@@ -1,9 +1,10 @@
-package student
+package poster
 
 import (
 	"backend/auth"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -15,6 +16,7 @@ import (
 type PostRequest struct {
 	Title       string `json:"title"`
 	Description string `json:"description"`
+	Category    string `json:"category"`
 }
 
 // Post struct (for storing in MongoDB)
@@ -33,6 +35,7 @@ func CreatePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 			http.Error(w, "Invalid request method", http.StatusMethodNotAllowed)
 			return
 		}
+
 		// Extract JWT token from cookie
 		cookie, err := r.Cookie("token")
 		if err != nil {
@@ -48,9 +51,9 @@ func CreatePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 		}
 
 		// Fetch student profile using email
-		collection := client.Database("student").Collection("profile_data")
-		var student StudentProfile
-		err = collection.FindOne(context.TODO(), bson.M{"email": claims.Email}).Decode(&student)
+		collection := client.Database("poster").Collection("profile_data")
+		var poster PosterProfile
+		err = collection.FindOne(context.TODO(), bson.M{"email": claims.Email}).Decode(&poster)
 		if err != nil {
 			http.Error(w, "Profile not found", http.StatusNotFound)
 			return
@@ -67,17 +70,21 @@ func CreatePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 		// Create post object
 		post := Post{
 			State:          "Active",
-			PublisherEmail: student.Email,
-			PublisherName:  student.Name,
+			PublisherEmail: poster.Email,
+			PublisherName:  poster.Name,
 			Title:          postReq.Title,
 			Description:    postReq.Description,
 			CreatedAt:      time.Now(),
 		}
 
+		database := postReq.Category
+		fmt.Printf("Creating a post at: %s\n", database)
+
 		// Insert into studentCommunity.active_post collection
-		_, err = client.Database("studentCommunity").Collection("active_post").InsertOne(context.TODO(), post)
+		_, err = client.Database(database).Collection("active_post").InsertOne(context.TODO(), post)
 		if err != nil {
 			http.Error(w, "Failed to save post", http.StatusInternalServerError)
+			fmt.Printf("err: %v\n", err)
 			return
 		}
 
@@ -103,19 +110,26 @@ func GetMyPostsHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 
 		var posts []bson.M
 
-		collection := client.Database("studentCommunity").Collection("active_post")
-		filter := bson.M{"publisher_email": claims.Email}
+		collections := []string{"researchPage", "internPage", "hatcheryPage"}
 
-		cursor, err := collection.Find(context.TODO(), filter)
-		if err != nil {
-			http.Error(w, "Error fetching posts", http.StatusInternalServerError)
-			return
-		}
-		defer cursor.Close(context.TODO())
+		for _, collName := range collections {
+			collection := client.Database("studentCommunity").Collection(collName)
+			filter := bson.M{"publisher_email": claims.Email}
 
-		if err = cursor.All(context.TODO(), &posts); err != nil {
-			http.Error(w, "Error decoding posts", http.StatusInternalServerError)
-			return
+			cursor, err := collection.Find(context.TODO(), filter)
+			if err != nil {
+				http.Error(w, "Error fetching posts from "+collName, http.StatusInternalServerError)
+				return
+			}
+			defer cursor.Close(context.TODO())
+
+			var singlePost []bson.M
+			if err := cursor.All(context.TODO(), &singlePost); err != nil {
+				http.Error(w, "Error decoding posts from "+collName, http.StatusInternalServerError)
+				return
+			}
+
+			posts = append(posts, singlePost...)
 		}
 
 		w.Header().Set("Content-Type", "application/json")

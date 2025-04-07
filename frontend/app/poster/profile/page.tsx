@@ -32,10 +32,10 @@ export default function PosterProfile() {
       </header>
 
       <nav className="bg-gray-900 text-white py-3 px-4 w-full flex space-x-6 justify-center">
-        <Link href="/poster/#">Student Community</Link>
-        <Link href="/poster/#">RA Opportunities</Link>
-        <Link href="/poster/#">Internships</Link>
-        <Link href="/poster/#">Bennett Hatchery</Link>
+        <Link href="/poster/community">Student Community</Link>
+        <Link href="/poster/ra">RA Opportunities</Link>
+        <Link href="/poster/internships">Internships</Link>
+        <Link href="/poster/hatchery">Bennett Hatchery</Link>
       </nav>
 
       <main className="flex-grow flex flex-col items-center justify-center p-6 w-full">
@@ -49,7 +49,16 @@ export default function PosterProfile() {
             <p className="bg-gray-200 p-2 rounded">🏫 School: {profile.school}</p>
           </div>
         </div>
+        <Link href="/poster/create-post">
+          <button className="mt-6 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+            Create a Post
+          </button>
+        </Link>
+
       </main>
     </div>
+    
+
+    
   );
 }

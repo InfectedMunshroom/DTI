@@ -75,9 +75,11 @@ func main() {
 	r.HandleFunc("/student/internships/event/{id}", common.GetEventByID(client, 2)).Methods("GET")
 	r.HandleFunc("/student/hatchery/event/{id}", common.GetEventByID(client, 3)).Methods("GET")
 
-	// Route handle post creation and it's display onto the student's profile page
+	// Route to create posts
 	r.HandleFunc("/student/create-post", student.CreatePostHandler(client, jwtKey)).Methods("POST")
+	r.HandleFunc("/poster/create-post", poster.CreatePostHandler(client, jwtKey)).Methods("POST")
 	r.HandleFunc("/student/my-posts", student.GetMyPostsHandler(client, jwtKey)).Methods("GET")
+	r.HandleFunc("/poster/my-posts", poster.GetMyPostsHandler(client, jwtKey)).Methods("GET")
 
 	// ✅ Apply global CORS middleware
 	handler := middleware.EnableCORS(r)
