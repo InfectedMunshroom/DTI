@@ -110,10 +110,11 @@ func GetMyPostsHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 
 		var posts []bson.M
 
-		collections := []string{"researchPage", "internPage", "hatcheryPage"}
+		database := []string{"researchPage", "internPage", "hatcheryPage"}
 
-		for _, collName := range collections {
-			collection := client.Database("studentCommunity").Collection(collName)
+		for _, collName := range database {
+			fmt.Printf("Searching for posts for %s in %s\n", claims.Email, collName)
+			collection := client.Database(collName).Collection("active_post")
 			filter := bson.M{"publisher_email": claims.Email}
 
 			cursor, err := collection.Find(context.TODO(), filter)

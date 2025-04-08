@@ -12,15 +12,48 @@ interface Profile {
   school: string;
 }
 
+interface Post {
+  _id: string;
+  title: string;
+  description: string;
+  state: string;
+  timestamp?: string; // optional, if your backend sends one
+}
+
 export default function PosterProfile() {
   const [profile, setProfile] = useState<Profile | null>(null);
-
+    const [posts, setPosts] = useState<Post[]>([]);
+    const [postsLoading, setPostsLoading] = useState(false);
+  
+    const fetchPosts = (email: string) => {
+      setPostsLoading(true);
+      fetch(`http://localhost:8080/poster/my-posts?email=${encodeURIComponent(email)}`, {
+        credentials: "include",
+      })
+        .then((res) => res.json())
+        .then((data: Post[]) => {
+          setPosts(data);
+          setPostsLoading(false);
+        })
+        .catch((err) => {
+          console.error("Error fetching posts:", err);
+          setPostsLoading(false);
+        });
+    };  
   useEffect(() => {
     fetch("http://localhost:8080/poster/profile", { credentials: "include" })
       .then((res) => res.json())
       .then((data: Profile) => setProfile(data))
       .catch((err) => console.error("Error fetching profile:", err));
+    
   }, []);
+  useEffect(() => {
+    if (profile?.email) {
+      console.log("Fetching posts for email:", profile.email); // Debug
+      fetchPosts(profile.email);
+    }
+  }, [profile]);
+
 
   if (!profile)
     return <p className="text-center text-lg text-gray-600 mt-10">Loading...</p>;
@@ -54,6 +87,25 @@ export default function PosterProfile() {
             Create a Post
           </button>
         </Link>
+                {/* Posts Section */}
+        <div className="mt-10">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">Your Posts</h3>
+          {postsLoading ? (
+            <p>Loading your posts...</p>
+          ) : posts.length === 0 ? (
+            <p className="text-gray-500">You haven't created any posts yet.</p>
+          ) : (
+            <ul className="space-y-4">
+              {posts.map((post) => (
+                <li key={post._id} className="border border-gray-200 p-4 rounded shadow-sm">
+                  <h4 className="text-lg font-bold text-gray-800">{post.title}</h4>
+                  <p className="text-gray-600">{post.description}</p>
+                  <p className="text-sm text-gray-400 mt-2">State: {post.state}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
 
       </main>
     </div>
