@@ -75,12 +75,15 @@ func main() {
 	r.HandleFunc("/student/internships/event/{id}", common.GetEventByID(client, 2)).Methods("GET")
 	r.HandleFunc("/student/hatchery/event/{id}", common.GetEventByID(client, 3)).Methods("GET")
 
-	// Route to create posts
+	// Route to handle posts posts
+	// Create
 	r.HandleFunc("/student/create-post", student.CreatePostHandler(client, jwtKey)).Methods("POST")
 	r.HandleFunc("/poster/create-post", poster.CreatePostHandler(client, jwtKey)).Methods("POST")
+	// Fetch
 	r.HandleFunc("/student/my-posts", student.GetMyPostsHandler(client, jwtKey)).Methods("GET")
 	r.HandleFunc("/poster/my-posts", poster.GetMyPostsHandler(client, jwtKey)).Methods("GET")
-
+	// Delete
+	r.HandleFunc("/poster/delete-post", poster.DeletePostHandler(client, jwtKey)).Methods("DELETE")
 	// ✅ Apply global CORS middleware
 	handler := middleware.EnableCORS(r)
 

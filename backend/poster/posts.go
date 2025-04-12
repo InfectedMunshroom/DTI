@@ -27,6 +27,7 @@ type Post struct {
 	Title          string    `bson:"title"`
 	Description    string    `bson:"description"`
 	CreatedAt      time.Time `bson:"created_at"`
+	Database       string    `bson:"database"`
 }
 
 func CreatePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
@@ -66,7 +67,7 @@ func CreatePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 			http.Error(w, "Invalid request body", http.StatusBadRequest)
 			return
 		}
-
+		database := postReq.Category
 		// Create post object
 		post := Post{
 			State:          "Active",
@@ -75,9 +76,9 @@ func CreatePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 			Title:          postReq.Title,
 			Description:    postReq.Description,
 			CreatedAt:      time.Now(),
+			Database:       database,
 		}
 
-		database := postReq.Category
 		fmt.Printf("Creating a post at: %s\n", database)
 
 		// Insert into studentCommunity.active_post collection
@@ -135,5 +136,56 @@ func GetMyPostsHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 
 		w.Header().Set("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(posts)
+	}
+}
+
+func DeletePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodDelete {
+			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+			return
+		}
+
+		// Extract JWT token
+		cookie, err := r.Cookie("token")
+		if err != nil {
+			http.Error(w, "Unauthorized: No token provided", http.StatusUnauthorized)
+			return
+		}
+		claims, err := auth.ValidateToken(cookie.Value, jwtKey)
+		if err != nil {
+			http.Error(w, "Unauthorized: Invalid token", http.StatusUnauthorized)
+			return
+		}
+
+		// Parse request body
+		var req struct {
+			ID       string `json:"id"`
+			Database string `json:"database"`
+		}
+		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			return
+		}
+
+		collection := client.Database(req.Database).Collection("active_post")
+
+		// Match by ID and publisher_email to prevent unauthorized deletes
+		filter := bson.M{
+			"_id":             req.ID,
+			"publisher_email": claims.Email,
+		}
+
+		res, err := collection.DeleteOne(context.TODO(), filter)
+		if err != nil {
+			http.Error(w, "Failed to delete post", http.StatusInternalServerError)
+			return
+		}
+		if res.DeletedCount == 0 {
+			http.Error(w, "Post not found or unauthorized", http.StatusNotFound)
+			return
+		}
+
+		json.NewEncoder(w).Encode(map[string]string{"message": "Post deleted successfully"})
 	}
 }
