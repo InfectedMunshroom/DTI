@@ -1,4 +1,4 @@
-package student
+package admin
 
 import (
 	"backend/auth"

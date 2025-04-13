@@ -43,8 +43,10 @@ export default function StudentProfile() {
       {/* Navbar */}
       <nav className="bg-blue-900 text-white py-3 px-4 flex space-x-6 justify-center">
         <Link href="/">Home</Link>
-        <Link href="/student/community">Student Community</Link>
-        <Link href="/student/applications">Applications</Link>
+        <Link href="/admin/community">Student Community</Link>
+        <Link href="/admin/ra">Research Positions and Openings</Link>
+        <Link href="/admin/internships">Internships</Link>
+        <Link href="/admin/hatchery">Hatchery</Link>
       </nav>
 
       {/* Profile Section */}

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -170,9 +171,20 @@ func DeletePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 
 		collection := client.Database(req.Database).Collection("active_post")
 
-		// Match by ID and publisher_email to prevent unauthorized deletes
+		objectID, err := primitive.ObjectIDFromHex(req.ID)
+
+		if err != nil {
+
+			http.Error(w, "Invalid post ID", http.StatusBadRequest)
+
+			return
+
+		}
+
 		filter := bson.M{
-			"_id":             req.ID,
+
+			"_id": objectID,
+
 			"publisher_email": claims.Email,
 		}
 
