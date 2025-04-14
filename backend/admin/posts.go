@@ -4,6 +4,7 @@ import (
 	"backend/auth"
 	"context"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -43,7 +44,7 @@ func DeletePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 			http.Error(w, "Unauthorized: No token provided", http.StatusUnauthorized)
 			return
 		}
-		claims, err := auth.ValidateToken(cookie.Value, jwtKey)
+		_, err = auth.ValidateToken(cookie.Value, jwtKey)
 		if err != nil {
 			http.Error(w, "Unauthorized: Invalid token", http.StatusUnauthorized)
 			return
@@ -51,7 +52,7 @@ func DeletePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 
 		// Parse request body
 		var req struct {
-			ID       string `json:"id"`
+			ID       string `json:"_id"`
 			Database string `json:"database"`
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
@@ -59,6 +60,7 @@ func DeletePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 			return
 		}
 
+		fmt.Println("Deleting post with ID", req.ID)
 		collection := client.Database(req.Database).Collection("active_post")
 
 		objectID, err := primitive.ObjectIDFromHex(req.ID)
@@ -66,7 +68,7 @@ func DeletePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 		if err != nil {
 
 			http.Error(w, "Invalid post ID", http.StatusBadRequest)
-
+			fmt.Println("Invalid post ID")
 			return
 
 		}
@@ -74,17 +76,17 @@ func DeletePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 		filter := bson.M{
 
 			"_id": objectID,
-
-			"publisher_email": claims.Email,
 		}
 
 		res, err := collection.DeleteOne(context.TODO(), filter)
 		if err != nil {
 			http.Error(w, "Failed to delete post", http.StatusInternalServerError)
+			fmt.Println("Failed to delete post")
 			return
 		}
 		if res.DeletedCount == 0 {
 			http.Error(w, "Post not found or unauthorized", http.StatusNotFound)
+			fmt.Println("Post not found")
 			return
 		}
 

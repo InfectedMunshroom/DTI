@@ -1,6 +1,7 @@
 package main
 
 import (
+	"backend/admin"
 	"backend/common"
 	"backend/middleware"
 	"backend/poster"
@@ -57,9 +58,15 @@ func main() {
 	r.HandleFunc("/login", loginHandler).Methods("POST")
 	r.HandleFunc("/profile", profileHandler).Methods("GET")
 
+	// Route for handling logout
+	r.HandleFunc("/logout", logoutHandler).Methods("POST")
+
 	// Routes to fetch profils
 	r.HandleFunc("/student/profile", student.GetStudentProfile(client, jwtKey)).Methods("GET")
 	r.HandleFunc("/poster/profile", poster.GetPosterProfile(client, jwtKey)).Methods("GET")
+	r.HandleFunc("/admin/profile", admin.GetAdminProfile(client, jwtKey))
+
+	// Fetch active posts for each page
 	r.HandleFunc("/student/community", common.FetchActivePosts(client, 0)).Methods("GET")
 	r.HandleFunc("/student/ra", common.FetchActivePosts(client, 1)).Methods("GET")
 	r.HandleFunc("/student/internships", common.FetchActivePosts(client, 2)).Methods("GET")
@@ -84,6 +91,7 @@ func main() {
 	r.HandleFunc("/poster/my-posts", poster.GetMyPostsHandler(client, jwtKey)).Methods("GET")
 	// Delete
 	r.HandleFunc("/poster/delete-post", poster.DeletePostHandler(client, jwtKey)).Methods("DELETE")
+	r.HandleFunc("/admin/delete-post", admin.DeletePostHandler(client, jwtKey)).Methods("DELETE")
 	// ✅ Apply global CORS middleware
 	handler := middleware.EnableCORS(r)
 
@@ -166,5 +174,27 @@ func profileHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string]string{
 		"email": claims.Email,
 		"role":  claims.Role,
+	})
+}
+
+func logoutHandler(w http.ResponseWriter, r *http.Request) {
+	log.Println("Logout attempt received")
+
+	// Overwrite the "token" cookie with empty value and expired date
+	http.SetCookie(w, &http.Cookie{
+		Name:     "token",
+		Value:    "",
+		Path:     "/",                  // Match the login cookie path
+		Expires:  time.Unix(0, 0),      // Expire the cookie immediately
+		MaxAge:   -1,                   // Delete cookie instantly
+		HttpOnly: true,                 // Keep it consistent
+		Secure:   true,                 // Use HTTPS in production
+		SameSite: http.SameSiteLaxMode, // Prevent CSRF in most cases
+	})
+
+	log.Println("Token cookie cleared successfully")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{
+		"message": "Logged out successfully",
 	})
 }

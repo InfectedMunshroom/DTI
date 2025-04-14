@@ -38,7 +38,7 @@ export default function LoginPage() {
       } else if (profileRes.data.role === "poster") {
         router.push("/poster/profile");
       } else if (profileRes.data.role === "admin") {
-        router.push("/admin");
+        router.push("/admin/profile");
       }
     } catch (error) {
       console.error("Login error:", error);

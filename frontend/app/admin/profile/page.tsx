@@ -7,10 +7,8 @@ interface Profile {
   name: string;
   email: string;
   phone: string;
-  branch: string;
-  semester: string;
-  skills: string[];
-  projects: string[];
+  designation: string;
+  id_number: string;
 }
 
 export default function StudentProfile() {
@@ -30,59 +28,100 @@ export default function StudentProfile() {
       });
   }, []);
 
-  if (loading) return <p className="text-center">Loading...</p>;
-  if (!profile) return <p className="text-center text-red-500">Profile not found.</p>;
+  if (loading)
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <p className="text-lg text-blue-700 animate-pulse">Loading...</p>
+      </div>
+    );
+
+  if (!profile)
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-gray-100">
+        <p className="text-lg text-red-500">Profile not found.</p>
+      </div>
+    );
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gray-50">
       {/* Header */}
-      <header className="bg-red-600 py-4 px-6">
-        <h1 className="text-white text-2xl font-bold text-center">Student Profile</h1>
+      <header className="bg-red-600 py-6 shadow-md">
+        <h1 className="text-white text-3xl font-extrabold text-center tracking-wide">Admin</h1>
       </header>
+      {/* Button Right for Logout*/}
+      <button
+      onClick={async () => {
+        const res = await fetch("http://localhost:8080/logout", {
+          method: "POST",
+          credentials: "include",
+        });
+    
+        if (res.ok) {
+          window.location.href = "/";
+        } else {
+          alert("Logout failed");
+        }
+      }}
+      className="absolute top-4 right-6 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-semibold z-50"
+    >
+      Log Out
+    </button>
 
       {/* Navbar */}
-      <nav className="bg-blue-900 text-white py-3 px-4 flex space-x-6 justify-center">
-        <Link href="/">Home</Link>
-        <Link href="/admin/community">Student Community</Link>
-        <Link href="/admin/ra">Research Positions and Openings</Link>
-        <Link href="/admin/internships">Internships</Link>
-        <Link href="/admin/hatchery">Hatchery</Link>
+      <nav className="bg-blue-900 text-white py-4 shadow-md">
+        <div className="flex justify-center space-x-8 text-sm font-medium">
+          <Link
+            href="/admin/community"
+            className="hover:text-yellow-300 transition-colors duration-200"
+          >
+            Student Community
+          </Link>
+          <Link
+            href="/admin/ra"
+            className="hover:text-yellow-300 transition-colors duration-200"
+          >
+            Research Positions
+          </Link>
+          <Link
+            href="/admin/internships"
+            className="hover:text-yellow-300 transition-colors duration-200"
+          >
+            Internships
+          </Link>
+          <Link
+            href="/admin/hatchery"
+            className="hover:text-yellow-300 transition-colors duration-200"
+          >
+            Hatchery
+          </Link>
+        </div>
       </nav>
 
+
       {/* Profile Section */}
-      <main className="flex-grow p-6 max-w-3xl mx-auto bg-white shadow-md rounded-lg">
-        <h2 className="text-2xl font-semibold text-gray-800">{profile.name}</h2>
-        <p className="text-gray-600"><strong>Email:</strong> {profile.email}</p>
-        <p className="text-gray-600"><strong>Phone:</strong> {profile.phone}</p>
-        <p className="text-gray-600"><strong>Branch:</strong> {profile.branch}</p>
-        <p className="text-gray-600"><strong>Semester:</strong> {profile.semester}</p>
-
-        {/* Skills */}
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold text-gray-800">Skills</h3>
-          {profile.skills.length > 0 ? (
-            <ul className="list-disc pl-5 text-gray-700">
-              {profile.skills.map((skill) => (
-                <li key={skill}>{skill}</li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-500">No skills listed.</p>
-          )}
-        </div>
-
-        {/* Projects */}
-        <div className="mt-4">
-          <h3 className="text-lg font-semibold text-gray-800">Projects</h3>
-          {profile.projects.length > 0 ? (
-            <ul className="list-disc pl-5 text-gray-700">
-              {profile.projects.map((project) => (
-                <li key={project}>{project}</li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-gray-500">No projects listed.</p>
-          )}
+      <main className="flex-grow px-4 py-10">
+        <div className="max-w-2xl mx-auto bg-white p-8 rounded-2xl shadow-xl border border-gray-200">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4">
+            {profile.name}
+          </h2>
+          <div className="space-y-3 text-gray-700">
+            <p>
+              <span className="font-semibold text-gray-900">Designation:</span>{" "}
+              {profile.designation}
+            </p>
+            <p>
+              <span className="font-semibold text-gray-900">ID:</span>{" "}
+              {profile.id_number}
+            </p>
+            <p>
+              <span className="font-semibold text-gray-900">Email:</span>{" "}
+              {profile.email}
+            </p>
+            <p>
+              <span className="font-semibold text-gray-900">Phone:</span>{" "}
+              {profile.phone}
+            </p>
+          </div>
         </div>
       </main>
     </div>

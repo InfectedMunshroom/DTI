@@ -24,6 +24,7 @@ type Post struct {
 	PublisherName  string    `bson:"publisher_name"`
 	Title          string    `bson:"title"`
 	Description    string    `bson:"description"`
+	Database       string    `bson:"database"`
 	CreatedAt      time.Time `bson:"created_at"`
 }
 
@@ -71,6 +72,7 @@ func CreatePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 			PublisherName:  student.Name,
 			Title:          postReq.Title,
 			Description:    postReq.Description,
+			Database:       "studentCommunity",
 			CreatedAt:      time.Now(),
 		}
 

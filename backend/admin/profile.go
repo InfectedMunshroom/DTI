@@ -11,17 +11,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type StudentProfile struct {
-	Name     string   `json:"name"`
-	Email    string   `json:"email"`
-	Phone    string   `json:"phone"`
-	Branch   string   `json:"branch"`
-	Semester string   `json:"semester"`
-	Skills   []string `json:"skills"`
-	Projects []string `json:"projects"`
+type AdminProfile struct {
+	Name        string `json:"name"`
+	Email       string `json:"email"`
+	Phone       string `json:"phone"`
+	Designation string `json:"designation"`
+	ID_Number   string `json:"id_number"`
 }
 
-func GetStudentProfile(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
+func GetAdminProfile(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Get JWT token from cookie
 		cookie, err := r.Cookie("token")
@@ -35,23 +33,21 @@ func GetStudentProfile(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 		if err != nil {
 			http.Error(w, "Unauthorized: Invalid token", http.StatusUnauthorized)
 			return
-		}
-
-		// Ensure the user is a student
-		if claims.Role != "student" {
-			http.Error(w, "Forbidden: Only students can access this", http.StatusForbidden)
-			return
+		} else {
+			fmt.Println("User authenticated for the showing of the frontpage for user defined by email: ", claims.Email)
 		}
 
 		// Fetch student profile from MongoDB using email from token
-		collection := client.Database("student").Collection("profile_data")
-		var profile StudentProfile
+		collection := client.Database("admin").Collection("profile_data")
+		var profile AdminProfile
 		err = collection.FindOne(context.TODO(), bson.M{"email": claims.Email}).Decode(&profile)
 		if err != nil {
 			http.Error(w, "Profile not found", http.StatusNotFound)
 			fmt.Printf("Profile with email %s is not found\n", claims.Email)
 			fmt.Println(err)
 			return
+		} else {
+			fmt.Println("Profile found")
 		}
 
 		// Return profile data
