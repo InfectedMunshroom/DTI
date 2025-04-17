@@ -13,7 +13,7 @@ interface Post {
   description: string;
 }
 
-export default function StudentCommunity() {
+ export default function StudentCommunity() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -107,7 +107,7 @@ export default function StudentCommunity() {
           <Link href="/admin/ra" className="hover:text-yellow-300 transition-colors">
             Research Positions
           </Link>
-          <Link href="/admin/entrepreneur" className="hover:text-yellow-300 transition-colors">
+          <Link href="/admin/internships" className="hover:text-yellow-300 transition-colors">
             Entrepreneur Openings
           </Link>
           <Link href="/admin/hatchery" className="hover:text-yellow-300 transition-colors">

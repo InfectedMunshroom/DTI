@@ -1,7 +1,3 @@
-// Login Page for the Project
-// Student login: student@example.com password 123 after login redircets to student profile
-
-
 "use client";
 import { useState } from "react";
 import axios from "axios";
@@ -14,25 +10,16 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     try {
-      console.log("Attempting login...");
-
-      // ✅ Send credentials for login
       const res = await axios.post(
         "http://localhost:8080/login",
         { email, password },
-        { withCredentials: true } // 👈 Ensures cookies are sent & received
+        { withCredentials: true }
       );
 
-      console.log("Login response:", res.data);
-
-      // ✅ Fetch profile with credentials (not token-based)
       const profileRes = await axios.get("http://localhost:8080/profile", {
-        withCredentials: true, // 👈 Required for session-based authentication
+        withCredentials: true,
       });
 
-      console.log("Profile response:", profileRes.data);
-
-      // ✅ Redirect based on role
       if (profileRes.data.role === "student") {
         router.push("/student/profile");
       } else if (profileRes.data.role === "poster") {
@@ -47,10 +34,49 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center">
-      <input className="border" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} />
-      <input className="border" placeholder="Password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      <button onClick={handleLogin} className="bg-blue-500 text-white px-4 py-2">Login</button>
+    <div className="min-h-screen flex flex-col items-center justify-start bg-white">
+      {/* Red Banner */}
+      <div className="w-full bg-red-600 py-4">
+        <h1 className="text-center text-white text-3xl font-bold">
+          Bennett Bridge
+        </h1>
+      </div>
+
+      {/* Login Section Card */}
+      <div className="flex flex-col items-center justify-center flex-1 mt-16 w-full px-4">
+        <div className="w-full max-w-sm bg-white border border-gray-300 rounded-xl shadow-md p-6 space-y-6">
+          <h2 className="text-2xl font-semibold text-black text-center">Login</h2>
+
+          <div className="flex flex-col">
+            <label className="text-gray-500 mb-1">Email</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Enter your email"
+            />
+          </div>
+
+          <div className="flex flex-col">
+            <label className="text-gray-500 mb-1">Password</label>
+            <input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="px-4 py-2 border border-gray-300 text-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+              placeholder="Enter your password"
+            />
+          </div>
+
+          <button
+            onClick={handleLogin}
+            className="w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg"
+          >
+            Login
+          </button>
+        </div>
+      </div>
     </div>
   );
 }

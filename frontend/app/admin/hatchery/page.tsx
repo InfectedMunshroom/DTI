@@ -101,16 +101,16 @@ export default function StudentCommunity() {
       {/* Navigation Bar */}
       <nav className="bg-blue-900 text-white py-4 shadow-md">
         <div className="flex justify-center space-x-8 text-sm font-medium">
-          <Link href="/student/community" className="hover:text-yellow-300 transition-colors">
+          <Link href="/admin/community" className="hover:text-yellow-300 transition-colors">
             Student Community
           </Link>
-          <Link href="/student/ra" className="hover:text-yellow-300 transition-colors">
+          <Link href="/admin/ra" className="hover:text-yellow-300 transition-colors">
             Research Positions
           </Link>
-          <Link href="/student/entrepreneur" className="hover:text-yellow-300 transition-colors">
+          <Link href="/admin/internships" className="hover:text-yellow-300 transition-colors">
             Entrepreneur Openings
           </Link>
-          <Link href="/student/hatchery" className="hover:text-yellow-300 transition-colors">
+          <Link href="/admin/hatchery" className="hover:text-yellow-300 transition-colors">
             Hatchery Openings
           </Link>
         </div>
