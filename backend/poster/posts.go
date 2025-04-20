@@ -5,9 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 
+	"github.com/gorilla/mux"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,13 +24,14 @@ type PostRequest struct {
 
 // Post struct (for storing in MongoDB)
 type Post struct {
-	State          string    `bson:"state"`
-	PublisherEmail string    `bson:"publisher_email"`
-	PublisherName  string    `bson:"publisher_name"`
-	Title          string    `bson:"title"`
-	Description    string    `bson:"description"`
-	CreatedAt      time.Time `bson:"created_at"`
-	Database       string    `bson:"database"`
+	State              string    `bson:"state"`
+	PublisherEmail     string    `bson:"publisher_email"`
+	PublisherName      string    `bson:"publisher_name"`
+	Title              string    `bson:"title"`
+	Description        string    `bson:"description"`
+	CreatedAt          time.Time `bson:"created_at"`
+	Database           string    `bson:"database"`
+	ApplicationCounter int       `bson:application_counter`
 }
 
 func CreatePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
@@ -200,4 +203,46 @@ func DeletePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 
 		json.NewEncoder(w).Encode(map[string]string{"message": "Post deleted successfully"})
 	}
+}
+
+func IncrementApplicationCounter(w http.ResponseWriter, r *http.Request, client *mongo.Client) {
+	vars := mux.Vars(r)
+	id := vars["id"]
+
+	// Parse ObjectID
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		http.Error(w, "Invalid ID", http.StatusBadRequest)
+		log.Println("Invalid ID")
+		return
+	}
+
+	// // Get the database name from the query parameter (?database=hatchery)
+	// databaseName := r.URL.Query().Get("database")
+	// if databaseName == "" {
+	// 	http.Error(w, "Database name is required", http.StatusBadRequest)
+	// 	fmt.Println("No database found")
+	// 	return
+	// }
+
+	// Get the collection from the dynamic database name
+	collection := client.Database("researchPage").Collection("active_post")
+
+	// Increment the application_counter
+	update := bson.M{"$inc": bson.M{"application_counter": 1}}
+	result, err := collection.UpdateOne(context.TODO(), bson.M{"_id": objID}, update)
+	if err != nil {
+		log.Println("Error updating application counter:", err)
+		http.Error(w, "Failed to update application counter", http.StatusInternalServerError)
+		return
+	}
+
+	if result.MatchedCount == 0 {
+		http.Error(w, "No document found to update", http.StatusNotFound)
+		fmt.Println("No document found")
+		return
+	}
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Application counter incremented"})
 }

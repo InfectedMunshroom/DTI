@@ -25,7 +25,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
     const fetchEvent = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8080/student/hatchery/event/${id}`
+          `http://localhost:8080/student/ra/event/${id}`
         );
         if (res.status === 200) {
           setEvent(res.data);
@@ -83,11 +83,20 @@ export default function EventPage({ params }: { params: { id: string } }) {
               Status: {event.state}
             </span>
             <button
-              onClick={() => alert("Quick apply clicked (dummy action)")}
+              onClick={async () => {
+                try {
+                  await axios.post(`http://localhost:8080/increment-counter/${event._id}`);
+                  alert("✅ Application submitted successfully!");
+                } catch (error) {
+                  console.error("Error applying:", error);
+                  alert("❌ Failed to apply.");
+                }
+              }}
               className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition"
             >
               Quick Apply
-            </button>
+          </button>
+
           </div>
         </div>
       </main>

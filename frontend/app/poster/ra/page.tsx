@@ -48,7 +48,7 @@ export default function ResearchAssistantOpenings() {
 
   useEffect(() => {
     fetchPosts();
-  }, []);
+  }, [fetchPosts]); // Ensure fetchPosts is called when page or state changes
 
   const lastPostRef = useCallback(
     (node: HTMLDivElement | null) => {

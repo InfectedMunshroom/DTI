@@ -21,7 +21,7 @@ export default function CreatePost() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ title, description, category }),
+        body: JSON.stringify({ title, description, category, application_counter:0 }),
       });
 
       if (response.ok) {
@@ -111,3 +111,4 @@ export default function CreatePost() {
     </div>
   );
 }
+

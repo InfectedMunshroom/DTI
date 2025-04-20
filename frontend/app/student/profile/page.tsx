@@ -19,7 +19,7 @@ interface Post {
   title: string;
   description: string;
   state: string;
-  timestamp?: string; // optional, if your backend sends one
+  timestamp?: string;
 }
 
 export default function StudentProfile() {
@@ -33,14 +33,11 @@ export default function StudentProfile() {
   const [postsLoading, setPostsLoading] = useState(false);
 
   useEffect(() => {
-    // Fetch profile
     fetch("http://localhost:8080/student/profile", { credentials: "include" })
       .then((res) => res.json())
       .then((data: Profile) => {
         setProfile(data);
         setLoading(false);
-
-        // Once profile is fetched, use email to fetch posts
         fetchPosts(data.email);
       })
       .catch((err) => {
@@ -48,7 +45,6 @@ export default function StudentProfile() {
         setLoading(false);
       });
 
-    // Fetch CV status
     fetch("http://localhost:8080/student/cv-status", { credentials: "include" })
       .then((res) => res.json())
       .then((data) => {
@@ -100,7 +96,7 @@ export default function StudentProfile() {
 
       if (response.ok) {
         setMessage("✅ CV uploaded successfully!");
-        setCvExists(true); // Update state after successful upload
+        setCvExists(true);
       } else {
         setMessage("❌ Failed to upload CV.");
       }
@@ -112,71 +108,73 @@ export default function StudentProfile() {
     setUploading(false);
   };
 
-  if (loading) return <p className="text-center">Loading...</p>;
-  if (!profile) return <p className="text-center text-red-500">Profile not found.</p>;
+  if (loading) return <p className="text-center text-blue-900">Loading...</p>;
+  if (!profile) return <p className="text-center text-red-600">Profile not found.</p>;
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <header className="bg-red-600 py-4 px-6">
+    <div className="min-h-screen flex flex-col bg-white">
+      <header className="bg-red-600 py-4 px-6 shadow-md">
         <h1 className="text-white text-2xl font-bold text-center">Student Profile</h1>
       </header>
 
-      <nav className="bg-blue-900 text-white py-3 px-4 flex space-x-6 justify-center">
-        <Link href="/student/community">Student Community</Link>
-        <Link href="/student/ra">RA & Faculty</Link>
-        <Link href="/student/internships">Internships</Link>
-        <Link href="/student/hatchery">Bennett Hatchery</Link>
+      <nav className="bg-blue-900 text-white py-3 px-4 flex space-x-6 justify-center font-medium">
+        <Link href="/student/community" className="hover:underline">Student Community</Link>
+        <Link href="/student/ra" className="hover:underline">RA & Faculty</Link>
+        <Link href="/student/internships" className="hover:underline">Internships</Link>
+        <Link href="/student/hatchery" className="hover:underline">Bennett Hatchery</Link>
       </nav>
 
-      <main className="flex-grow p-6 max-w-3xl mx-auto bg-white shadow-md rounded-lg">
-        <h2 className="text-2xl font-semibold text-gray-800">{profile.name}</h2>
-        <p className="text-gray-600"><strong>Email:</strong> {profile.email}</p>
-        <p className="text-gray-600"><strong>Phone:</strong> {profile.phone}</p>
-        <p className="text-gray-600"><strong>Branch:</strong> {profile.branch}</p>
-        <p className="text-gray-600"><strong>Semester:</strong> {profile.semester}</p>
+      <main className="flex-grow p-6 max-w-3xl mx-auto bg-white text-blue-900">
+        <h2 className="text-2xl font-semibold">{profile.name}</h2>
+        <p><strong>Email:</strong> {profile.email}</p>
+        <p><strong>Phone:</strong> {profile.phone}</p>
+        <p><strong>Branch:</strong> {profile.branch}</p>
+        <p><strong>Semester:</strong> {profile.semester}</p>
 
-        {/* CV Status Section */}
+        {/* CV Status */}
         <div className="mt-6">
-          <h3 className="text-lg font-semibold text-gray-800">CV Status</h3>
+          <h3 className="text-lg font-semibold">CV Status</h3>
           {cvExists === null ? (
             <p>Checking CV status...</p>
           ) : cvExists ? (
-            <p className="text-green-500">✅ CV is already uploaded</p>
+            <p className="text-green-600">✅ CV is already uploaded</p>
           ) : (
-            <p className="text-red-500">❌ No CV uploaded</p>
+            <p className="text-red-600">❌ No CV uploaded</p>
           )}
         </div>
 
-        {/* CV Upload Section */}
+        {/* Upload CV */}
         <div className="mt-4">
-          <h3 className="text-lg font-semibold text-gray-800">Upload CV</h3>
+          <h3 className="text-lg font-semibold">Upload CV</h3>
           <input
             type="file"
             accept=".pdf"
-            className="mt-2 border p-2 rounded w-full"
+            className="mt-2 border border-blue-900 p-2 rounded w-full"
             onChange={handleFileChange}
             disabled={cvExists || uploading}
           />
           <button
-            className={`mt-3 px-4 py-2 rounded text-white ${cvExists || uploading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"}`}
+            className={`mt-3 px-4 py-2 rounded text-white ${
+              cvExists || uploading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-900 hover:bg-blue-950"
+            }`}
             onClick={uploadCv}
             disabled={cvExists || uploading}
           >
             {uploading ? "Uploading..." : cvExists ? "CV Already Uploaded" : "Upload CV"}
           </button>
-          {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
+          {message && <p className="mt-2 text-sm">{message}</p>}
         </div>
 
-        {/* Create Post Section */}
+        {/* Create Post */}
         <Link href="/student/create-post">
-          <button className="mt-6 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+          <button className="mt-6 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
             Create a Post
           </button>
         </Link>
 
-        {/* Posts Section */}
+        {/* Posts */}
         <div className="mt-10">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">Your Posts</h3>
+          <h3 className="text-xl font-semibold mb-4">Your Posts</h3>
           {postsLoading ? (
             <p>Loading your posts...</p>
           ) : posts.length === 0 ? (
@@ -184,10 +182,10 @@ export default function StudentProfile() {
           ) : (
             <ul className="space-y-4">
               {posts.map((post) => (
-                <li key={post._id} className="border border-gray-200 p-4 rounded shadow-sm">
-                  <h4 className="text-lg font-bold text-gray-800">{post.title}</h4>
-                  <p className="text-gray-600">{post.description}</p>
-                  <p className="text-sm text-gray-400 mt-2">State: {post.state}</p>
+                <li key={post._id} className="border border-gray-200 p-4 rounded shadow-sm bg-gray-50">
+                  <h4 className="text-lg font-bold">{post.title}</h4>
+                  <p className="text-blue-900">{post.description}</p>
+                  <p className="text-sm text-gray-500 mt-2">State: {post.state}</p>
                 </li>
               ))}
             </ul>

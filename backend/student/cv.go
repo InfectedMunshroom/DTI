@@ -133,3 +133,48 @@ func CheckCVStatus(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 		w.Write([]byte(`{"cvExists": true}`))
 	}
 }
+
+func GetCV() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Parse the query parameter ?id=studentId
+		studentID := r.URL.Query().Get("id")
+		if studentID == "" {
+			http.Error(w, "Missing student ID", http.StatusBadRequest)
+			return
+		}
+
+		// Sanity check: valid ObjectID (not required, but good practice)
+		if _, err := primitive.ObjectIDFromHex(studentID); err != nil {
+			http.Error(w, "Invalid student ID", http.StatusBadRequest)
+			return
+		}
+
+		// Construct file path
+		cvPath := fmt.Sprintf("/var/www/student_cvs/%s.pdf", studentID)
+
+		// Check if file exists
+		if _, err := os.Stat(cvPath); os.IsNotExist(err) {
+			http.Error(w, "CV not found", http.StatusNotFound)
+			return
+		}
+
+		// Open the file
+		file, err := os.Open(cvPath)
+		if err != nil {
+			http.Error(w, "Failed to open CV", http.StatusInternalServerError)
+			return
+		}
+		defer file.Close()
+
+		// Set headers for file download
+		w.Header().Set("Content-Type", "application/pdf")
+		w.Header().Set("Content-Disposition", "attachment; filename=student_cv.pdf")
+		w.WriteHeader(http.StatusOK)
+
+		// Copy file contents to response
+		if _, err := io.Copy(w, file); err != nil {
+			http.Error(w, "Failed to send CV", http.StatusInternalServerError)
+			return
+		}
+	}
+}

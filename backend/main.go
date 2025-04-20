@@ -75,6 +75,7 @@ func main() {
 	// Route to upload CVs
 	r.HandleFunc("/student/upload-cv", student.UploadCV(client, jwtKey)).Methods("POST")
 	r.HandleFunc("/student/cv-status", student.CheckCVStatus(client, jwtKey)).Methods("GET")
+	r.HandleFunc("/student/get-cv", student.GetCV()).Methods("GET")
 
 	// Dynamic ID route for events
 	r.HandleFunc("/student/community/event/{id}", common.GetEventByID(client, 0)).Methods("GET")
@@ -92,7 +93,13 @@ func main() {
 	// Delete
 	r.HandleFunc("/poster/delete-post", poster.DeletePostHandler(client, jwtKey)).Methods("DELETE")
 	r.HandleFunc("/admin/delete-post", admin.DeletePostHandler(client, jwtKey)).Methods("DELETE")
-	// ✅ Apply global CORS middleware
+
+	// Increment the Counter
+	r.HandleFunc("/increment-counter/{id}", func(w http.ResponseWriter, r *http.Request) {
+		poster.IncrementApplicationCounter(w, r, client)
+	}).Methods("POST")
+
+	// Apply global CORS middleware
 	handler := middleware.EnableCORS(r)
 
 	// Start the server
