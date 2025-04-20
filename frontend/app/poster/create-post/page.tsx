@@ -6,8 +6,8 @@ import { useRouter } from "next/navigation";
 export default function CreatePost() {
   const router = useRouter();
   const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("")
-  const [category, setCategory] = useState("researchPage")
+  const [description, setDescription] = useState("");
+  const [category, setCategory] = useState("researchPage");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
@@ -21,7 +21,7 @@ export default function CreatePost() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify({ title, description, category}),
+        body: JSON.stringify({ title, description, category }),
       });
 
       if (response.ok) {
@@ -39,58 +39,75 @@ export default function CreatePost() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-      <div className="bg-white p-6 shadow-md rounded-lg w-full max-w-md">
-        <h1 className="text-2xl font-bold mb-4">Create a Post</h1>
+    <div className="min-h-screen bg-white flex flex-col items-center">
+      {/* Header */}
+      <header className="bg-red-700 py-4 px-6 w-full text-center shadow-md">
+        <h1 className="text-white text-2xl font-bold">Create a Post</h1>
+      </header>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block font-medium">Title</label>
-            <input
-              type="text"
-              className="w-full border p-2 rounded"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-          </div>
+      {/* Nav */}
+      <nav className="bg-blue-900 text-white py-3 px-4 w-full flex space-x-6 justify-center">
+        <a href="/poster/community" className="hover:underline">Student Community</a>
+        <a href="/poster/ra" className="hover:underline">RA Opportunities</a>
+        <a href="/poster/internships" className="hover:underline">Internships</a>
+        <a href="/poster/hatchery" className="hover:underline">Bennett Hatchery</a>
+      </nav>
 
-          <div>
-            <label className="block font-medium">Description</label>
-            <textarea
-              className="w-full border p-2 rounded"
-              rows={4}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              required
-            ></textarea>
-          </div>
-          <div>
-          <label className="block mb-1">Category</label>
-          <select
-            className="w-full border rounded px-3 py-2"
-            value={category}
-            onChange={(e) => setCategory(e.target.value)}
-          >
-            <option value="researchPage">RA</option>
-            <option value="internPage">Internship</option>
-            <option value="hatcheryPage">Hatchery</option>
-          </select>
+      {/* Form */}
+      <main className="flex-grow flex items-center justify-center p-6 w-full">
+        <div className="bg-gray-50 p-6 rounded-lg shadow-lg w-full max-w-md border border-red-100">
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700">Title</label>
+              <input
+                type="text"
+                className="w-full mt-1 border border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700">Description</label>
+              <textarea
+                className="w-full mt-1 border border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+                rows={4}
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                required
+              ></textarea>
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700">Category</label>
+              <select
+                className="w-full mt-1 border border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              >
+                <option value="researchPage">RA</option>
+                <option value="internPage">Internship</option>
+                <option value="hatcheryPage">Hatchery</option>
+              </select>
+            </div>
+
+            <button
+              type="submit"
+              className={`w-full py-2 text-white rounded transition-all ${
+                loading ? "bg-gray-400 cursor-not-allowed" : "bg-red-600 hover:bg-red-700"
+              }`}
+              disabled={loading}
+            >
+              {loading ? "Posting..." : "Submit Post"}
+            </button>
+          </form>
+
+          {message && (
+            <p className="mt-4 text-sm text-center text-blue-800 font-medium">{message}</p>
+          )}
         </div>
-
-          <button
-            type="submit"
-            className={`w-full px-4 py-2 text-white rounded ${
-              loading ? "bg-gray-400 cursor-not-allowed" : "bg-blue-600 hover:bg-blue-700"
-            }`}
-            disabled={loading}
-          >
-            {loading ? "Posting..." : "Submit Post"}
-          </button>
-        </form>
-
-        {message && <p className="mt-2 text-sm text-gray-700">{message}</p>}
-      </div>
+      </main>
     </div>
   );
 }

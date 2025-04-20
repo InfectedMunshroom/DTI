@@ -25,6 +25,7 @@ export default function PosterProfile() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
   const [postsLoading, setPostsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchPosts = (email: string) => {
     setPostsLoading(true);
@@ -32,21 +33,34 @@ export default function PosterProfile() {
       credentials: "include",
     })
       .then((res) => res.json())
-      .then((data: Post[]) => {
-        setPosts(data);
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setPosts(data);
+        } else {
+          console.warn("Unexpected posts data:", data);
+          setPosts([]);
+        }
         setPostsLoading(false);
       })
       .catch((err) => {
         console.error("Error fetching posts:", err);
+        setError("Failed to load posts.");
+        setPosts([]);
         setPostsLoading(false);
       });
   };
 
   useEffect(() => {
     fetch("http://localhost:8080/poster/profile", { credentials: "include" })
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to fetch profile");
+        return res.json();
+      })
       .then((data: Profile) => setProfile(data))
-      .catch((err) => console.error("Error fetching profile:", err));
+      .catch((err) => {
+        console.error("Error fetching profile:", err);
+        setError("Failed to load profile.");
+      });
   }, []);
 
   useEffect(() => {
@@ -117,7 +131,7 @@ export default function PosterProfile() {
           <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center">Your Posts</h3>
           {postsLoading ? (
             <p>Loading your posts...</p>
-          ) : posts.length === 0 ? (
+          ) : (posts?.length ?? 0) === 0 ? (
             <p className="text-gray-500 text-center">You haven't created any posts yet.</p>
           ) : (
             <ul className="space-y-4">
@@ -130,6 +144,7 @@ export default function PosterProfile() {
                     onClick={() => handleDeletePost(post._id, post.database)}
                     className="absolute top-2 right-2 text-red-600 hover:text-red-800"
                     title="Delete Post"
+                    aria-label={`Delete post: ${post.title}`}
                   >
                     <FiX size={20} />
                   </button>
