@@ -27,7 +27,7 @@ export default function StudentCommunity() {
     setLoading(true);
 
     try {
-      const res = await axios.get(`http://localhost:8080/student/hatchery?page=${page}&limit=10`);
+      const res = await axios.get(`http://localhost:8080/student/community?page=${page}&limit=10`);
 
       if (!Array.isArray(res.data) || res.data.length === 0) {
         setHasMore(false);
@@ -95,6 +95,15 @@ export default function StudentCommunity() {
       {/* Main Content */}
       <main className="flex-grow px-4 py-10 bg-white">
         <div className="max-w-4xl mx-auto space-y-6">
+            {/* Back to Profile Button */}
+              <div className="mb-6">
+                <Link
+                  href="/poster/profile"
+                  className="inline-block bg-blue-900 text-white px-5 py-2 rounded-xl font-semibold shadow hover:bg-blue-800 transition"
+                >
+                  ← Back to Profile
+                </Link>
+              </div>
           {posts.length === 0 && !loading && (
             <p className="text-center text-gray-500 text-lg">No posts found.</p>
           )}
@@ -102,7 +111,7 @@ export default function StudentCommunity() {
           {posts.map((post, index) => {
             if (!post._id) return null;
             return (
-              <Link key={post._id} href={`/poster/hatchery/event/${post._id}`}>
+              <Link key={post._id} href={`/poster/community/event/${post._id}`}>
                 <div
                   ref={index === posts.length - 1 ? lastPostRef : null}
                   className="relative border border-blue-200 bg-white p-6 rounded-2xl shadow hover:shadow-lg transition cursor-pointer hover:bg-blue-50"

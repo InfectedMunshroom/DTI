@@ -24,14 +24,14 @@ type PostRequest struct {
 
 // Post struct (for storing in MongoDB)
 type Post struct {
-	State              string    `bson:"state"`
-	PublisherEmail     string    `bson:"publisher_email"`
-	PublisherName      string    `bson:"publisher_name"`
-	Title              string    `bson:"title"`
-	Description        string    `bson:"description"`
-	CreatedAt          time.Time `bson:"created_at"`
-	Database           string    `bson:"database"`
-	ApplicationCounter int       `bson:application_counter`
+	State          string    `bson:"state"`
+	PublisherEmail string    `bson:"publisher_email"`
+	PublisherName  string    `bson:"publisher_name"`
+	Title          string    `bson:"title"`
+	Description    string    `bson:"description"`
+	CreatedAt      time.Time `bson:"created_at"`
+	Database       string    `bson:"database"`
+	//ApplicationCounter int       `bson:application_counter`
 }
 
 func CreatePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {

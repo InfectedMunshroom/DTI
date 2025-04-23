@@ -61,7 +61,7 @@ export default function CreatePost() {
               <label className="block text-sm font-semibold text-gray-700">Title</label>
               <input
                 type="text"
-                className="w-full mt-1 border border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full mt-1 border border-blue-300 text-black p-2 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 required
@@ -71,7 +71,7 @@ export default function CreatePost() {
             <div>
               <label className="block text-sm font-semibold text-gray-700">Description</label>
               <textarea
-                className="w-full mt-1 border border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full mt-1 border border-blue-300 p-2 rounded text-black focus:outline-none focus:ring-2 focus:ring-red-500"
                 rows={4}
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -82,7 +82,7 @@ export default function CreatePost() {
             <div>
               <label className="block text-sm font-semibold text-gray-700">Category</label>
               <select
-                className="w-full mt-1 border border-blue-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+                className="w-full mt-1 border border-blue-300 p-2 rounded focus:outline-none text-black focus:ring-2 focus:ring-red-500"
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               >
