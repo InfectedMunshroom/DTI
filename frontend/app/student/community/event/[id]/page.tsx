@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!;
 interface EventDetails {
   _id: string;
   state: string;
@@ -25,7 +26,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
     const fetchEvent = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8080/student/community/event/${id}`
+          `${baseUrl}/student/community/event/${id}`
         );
         if (res.status === 200) {
           setEvent(res.data);
@@ -85,7 +86,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
             <button
               onClick={async () => {
                 try {
-                  await axios.post(`http://localhost:8080/increment-counter/${event._id}`);
+                  await axios.post(`${baseUrl}/increment-counter/${event._id}`);
                   alert("✅ Application submitted successfully!");
                 } catch (error) {
                   console.error("Error applying:", error);
@@ -95,7 +96,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
               className="px-5 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition"
             >
               Quick Apply
-          </button>
+            </button>
 
           </div>
         </div>

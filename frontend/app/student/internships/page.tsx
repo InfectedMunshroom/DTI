@@ -12,6 +12,7 @@ interface Post {
   title: string;
   description: string;
 }
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!; // e.g., http://192.168.1.100:8080/api
 
 export default function StudentCommunity() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -28,7 +29,7 @@ export default function StudentCommunity() {
 
     try {
       const res = await axios.get(
-        `http://localhost:8080/student/internships?page=${page}&limit=10`
+        `${baseUrl}/student/internships?page=${page}&limit=10`
       );
 
       console.log("API Response:", res.data);

@@ -20,6 +20,7 @@ export default function ResearchAssistantOpenings() {
   const [hasMore, setHasMore] = useState(true);
   const observer = useRef<IntersectionObserver | null>(null);
   const fetchedPages = useRef(new Set<number>());
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!; // e.g., http://192.168.1.100:8080/api
 
   const fetchPosts = useCallback(async () => {
     if (!hasMore || loading || fetchedPages.current.has(page)) return;
@@ -28,7 +29,7 @@ export default function ResearchAssistantOpenings() {
 
     try {
       const res = await axios.get(
-        `http://localhost:8080/student/ra?page=${page}&limit=10`
+        `${baseUrl}/student/ra?page=${page}&limit=10`
       );
 
       console.log("API Response:", res.data);

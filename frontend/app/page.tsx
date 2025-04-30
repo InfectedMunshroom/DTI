@@ -2,6 +2,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!; // e.g., http://192.168.1.100:8080/api
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,12 +12,12 @@ export default function LoginPage() {
   const handleLogin = async () => {
     try {
       const res = await axios.post(
-        "http://localhost:8080/login",
+        `${baseUrl}/login`,
         { email, password },
         { withCredentials: true }
       );
 
-      const profileRes = await axios.get("http://localhost:8080/profile", {
+      const profileRes = await axios.get(`${baseUrl}/profile`, {
         withCredentials: true,
       });
 

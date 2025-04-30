@@ -4,6 +4,8 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import axios from "axios";
 import Link from "next/link";
 
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!;
+
 interface Post {
   _id: string;
   state: string;
@@ -27,7 +29,7 @@ export default function StudentCommunity() {
     setLoading(true);
 
     try {
-      const res = await axios.get(`http://localhost:8080/student/community?page=${page}&limit=10`);
+      const res = await axios.get(`${baseUrl}/student/community?page=${page}&limit=10`);
 
       if (!Array.isArray(res.data) || res.data.length === 0) {
         setHasMore(false);
@@ -95,15 +97,15 @@ export default function StudentCommunity() {
       {/* Main Content */}
       <main className="flex-grow px-4 py-10 bg-white">
         <div className="max-w-4xl mx-auto space-y-6">
-        {/* Back to Profile Button */}
+          {/* Back to Profile Button */}
           <div className="mb-6">
-          <Link
-            href="/student/profile"
-            className="inline-block bg-blue-900 text-white px-5 py-2 rounded-xl font-semibold shadow hover:bg-blue-800 transition"
-          >
+            <Link
+              href="/student/profile"
+              className="inline-block bg-blue-900 text-white px-5 py-2 rounded-xl font-semibold shadow hover:bg-blue-800 transition"
+            >
               Back to Profile
-          </Link>
-        </div>
+            </Link>
+          </div>
           {posts.length === 0 && !loading && (
             <p className="text-center text-gray-500 text-lg">No posts found.</p>
           )}

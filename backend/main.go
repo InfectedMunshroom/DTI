@@ -104,7 +104,7 @@ func main() {
 
 	// Start the server
 	log.Println("Server running on port 8080")
-	http.ListenAndServe(":8080", handler)
+	http.ListenAndServe("10.12.108.251:8080", handler)
 }
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {

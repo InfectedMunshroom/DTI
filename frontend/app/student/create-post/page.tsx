@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!;
+
 export default function CreatePost() {
   const router = useRouter();
   const [title, setTitle] = useState("");
@@ -17,7 +19,7 @@ export default function CreatePost() {
     setMessage("");
 
     try {
-      const response = await fetch("http://localhost:8080/student/create-post", {
+      const response = await fetch(`${baseUrl}/student/create-post`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -86,11 +88,10 @@ export default function CreatePost() {
 
             <button
               type="submit"
-              className={`w-full py-2 text-white font-semibold rounded-md transition ${
-                loading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-red-600 hover:bg-red-700"
-              }`}
+              className={`w-full py-2 text-white font-semibold rounded-md transition ${loading
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-red-600 hover:bg-red-700"
+                }`}
               disabled={loading}
             >
               {loading ? "Posting..." : "Submit Post"}

@@ -25,6 +25,9 @@ interface Post {
   application_counter?: number;
 }
 
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!;
+
+
 export default function StudentProfile() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [posts, setPosts] = useState<Post[]>([]);
@@ -36,7 +39,7 @@ export default function StudentProfile() {
   const [postsLoading, setPostsLoading] = useState(false);
 
   useEffect(() => {
-    fetch("http://localhost:8080/student/profile", { credentials: "include" })
+    fetch(`${baseUrl}/student/profile`, { credentials: "include" })
       .then((res) => res.json())
       .then((data: Profile) => {
         setProfile(data);
@@ -45,7 +48,7 @@ export default function StudentProfile() {
       .catch((err) => console.error("Error fetching profile:", err))
       .finally(() => setLoading(false));
 
-    fetch("http://localhost:8080/student/cv-status", { credentials: "include" })
+    fetch(`${baseUrl}/student/cv-status`, { credentials: "include" })
       .then((res) => res.json())
       .then((data) => setCvExists(data.cvExists))
       .catch((err) => console.error("Error fetching CV status:", err));
@@ -53,7 +56,7 @@ export default function StudentProfile() {
 
   const fetchPosts = (email: string) => {
     setPostsLoading(true);
-    fetch(`http://localhost:8080/student/my-posts?email=${encodeURIComponent(email)}`, {
+    fetch(`${baseUrl}/student/my-posts?email=${encodeURIComponent(email)}`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -70,19 +73,20 @@ export default function StudentProfile() {
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch("http://localhost:8080/poster/delete-post", {
+      const res = await fetch(`${baseUrl}/poster/delete-post`, {
         method: "DELETE",
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ _id: postId, database }),
+        body: JSON.stringify({ id: postId, database }),
       });
 
       if (res.ok) {
         setPosts((prev) => prev.filter((p) => p._id !== postId));
       } else {
-        console.error("Failed to delete post");
+        const errorText = await res.text();
+        console.error("Failed to delete post: ", errorText);
       }
     } catch (err) {
       console.error("Error deleting post:", err);
@@ -106,7 +110,7 @@ export default function StudentProfile() {
     formData.append("cv", cv);
 
     try {
-      const res = await fetch("http://localhost:8080/student/upload-cv", {
+      const res = await fetch(`${baseUrl}/student/upload-cv`, {
         method: "POST",
         credentials: "include",
         body: formData,
@@ -140,22 +144,22 @@ export default function StudentProfile() {
         Student Profile
       </header>
       <button
-      onClick={async () => {
-        const res = await fetch("http://localhost:8080/logout", {
-          method: "POST",
-          credentials: "include",
-        });
-    
-        if (res.ok) {
-          window.location.href = "/";
-        } else {
-          alert("Logout failed");
-        }
-      }}
-      className="absolute top-4 right-6 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-semibold z-50"
-    >
-      Log Out
-    </button>
+        onClick={async () => {
+          const res = await fetch(`${baseUrl}/logout`, {
+            method: "POST",
+            credentials: "include",
+          });
+
+          if (res.ok) {
+            window.location.href = "/";
+          } else {
+            alert("Logout failed");
+          }
+        }}
+        className="absolute top-4 right-6 bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm font-semibold z-50"
+      >
+        Log Out
+      </button>
       <nav className="bg-blue-900 text-white py-3 px-4 flex space-x-6 justify-center font-medium">
         <Link href="/student/community" className="hover:underline">Student Community</Link>
         <Link href="/student/ra" className="hover:underline">RA & Faculty</Link>
@@ -194,9 +198,8 @@ export default function StudentProfile() {
               disabled={uploading}
             />
             <button
-              className={`mt-3 px-4 py-2 rounded text-white ${
-                uploading ? "bg-gray-400" : "bg-blue-900 hover:bg-blue-950"
-              }`}
+              className={`mt-3 px-4 py-2 rounded text-white ${uploading ? "bg-gray-400" : "bg-blue-900 hover:bg-blue-950"
+                }`}
               onClick={uploadCv}
               disabled={uploading}
             >
@@ -215,47 +218,47 @@ export default function StudentProfile() {
         <section>
           <h3 className="text-xl font-semibold text-center mb-4">Your Posts</h3>
           {postsLoading ? (
-  <p className="text-center text-blue-600">Loading posts...</p>
-) : !Array.isArray(posts) || posts.length === 0 ? (
-  <p className="text-center text-gray-500">You haven't created any posts yet.</p>
-) : (
-  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-    {(posts || []).map((post) => {
-      const clickable = (post.application_counter ?? 0) > 0;
-      const content = (
-        <div className="relative border border-blue-200 p-4 rounded shadow bg-white hover:shadow-md transition">
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              handleDeletePost(post._id, post.database);
-            }}
-            className="absolute top-2 right-2 text-red-600 hover:text-red-800"
-            title="Delete Post"
-            aria-label={`Delete post: ${post.title}`}
-          >
-            <FiX size={20} />
-          </button>
-          <h4 className="text-lg font-bold text-blue-900">{post.title}</h4>
-          <p className="text-gray-700 mt-1">{post.description}</p>
-          <p className="text-sm text-gray-500 mt-2">State: {post.state}</p>
-          <p className="text-sm text-red-600 mt-1">Applications: {post.application_counter ?? 0}</p>
-        </div>
-      );
-
-      return (
-        <div key={post._id}>
-          {clickable ? (
-            <Link href={`/poster/view-applications/`}>
-              {content}
-            </Link>
+            <p className="text-center text-blue-600">Loading posts...</p>
+          ) : !Array.isArray(posts) || posts.length === 0 ? (
+            <p className="text-center text-gray-500">You haven't created any posts yet.</p>
           ) : (
-            content
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {(posts || []).map((post) => {
+                const clickable = (post.application_counter ?? 0) > 0;
+                const content = (
+                  <div className="relative border border-blue-200 p-4 rounded shadow bg-white hover:shadow-md transition">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeletePost(post._id, post.database);
+                      }}
+                      className="absolute top-2 right-2 text-red-600 hover:text-red-800"
+                      title="Delete Post"
+                      aria-label={`Delete post: ${post.title}`}
+                    >
+                      <FiX size={20} />
+                    </button>
+                    <h4 className="text-lg font-bold text-blue-900">{post.title}</h4>
+                    <p className="text-gray-700 mt-1">{post.description}</p>
+                    <p className="text-sm text-gray-500 mt-2">State: {post.state}</p>
+                    <p className="text-sm text-red-600 mt-1">Applications: {post.application_counter ?? 0}</p>
+                  </div>
+                );
+
+                return (
+                  <div key={post._id}>
+                    {clickable ? (
+                      <Link href={`/poster/view-applications/`}>
+                        {content}
+                      </Link>
+                    ) : (
+                      content
+                    )}
+                  </div>
+                );
+              })}
+            </div>
           )}
-        </div>
-      );
-    })}
-  </div>
-)}
 
         </section>
       </main>

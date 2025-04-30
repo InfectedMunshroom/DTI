@@ -31,7 +31,7 @@ type Post struct {
 	Description    string    `bson:"description"`
 	CreatedAt      time.Time `bson:"created_at"`
 	Database       string    `bson:"database"`
-	//ApplicationCounter int       `bson:application_counter`
+	// ApplicationCounter int       `bson:application_counter`
 }
 
 func CreatePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
@@ -149,7 +149,7 @@ func DeletePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 			return
 		}
-
+		fmt.Println("Trying to delete post")
 		// Extract JWT token
 		cookie, err := r.Cookie("token")
 		if err != nil {
@@ -169,13 +169,13 @@ func DeletePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 		}
 		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 			http.Error(w, "Invalid request body", http.StatusBadRequest)
+			fmt.Println("Error with decoding the json body")
 			return
 		}
-
+		fmt.Println(req.Database)
 		collection := client.Database(req.Database).Collection("active_post")
 
 		objectID, err := primitive.ObjectIDFromHex(req.ID)
-
 		if err != nil {
 
 			http.Error(w, "Invalid post ID", http.StatusBadRequest)
@@ -185,7 +185,6 @@ func DeletePostHandler(client *mongo.Client, jwtKey []byte) http.HandlerFunc {
 		}
 
 		filter := bson.M{
-
 			"_id": objectID,
 
 			"publisher_email": claims.Email,

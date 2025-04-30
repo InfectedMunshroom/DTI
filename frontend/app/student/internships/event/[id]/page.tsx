@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!; // e.g., http://192.168.1.100:8080/api
 
 interface EventDetails {
   _id: string;
@@ -25,7 +26,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
     const fetchEvent = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8080/student/hatchery/event/${id}`
+          `${baseUrl}/student/hatchery/event/${id}`
         );
         if (res.status === 200) {
           setEvent(res.data);
