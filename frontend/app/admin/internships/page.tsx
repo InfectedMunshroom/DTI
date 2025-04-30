@@ -28,7 +28,7 @@ export default function StudentCommunity() {
     setLoading(true);
 
     try {
-      const res = await axios.get(`http://localhost:8080/student/internships?page=${page}&limit=10`);
+      const res = await axios.get(`${baseUrl}/student/internships?page=${page}&limit=10`);
       if (!Array.isArray(res.data) || res.data.length === 0) {
         setHasMore(false);
       } else {

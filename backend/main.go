@@ -8,6 +8,7 @@ import (
 	"backend/student"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -103,8 +104,12 @@ func main() {
 	handler := middleware.EnableCORS(r)
 
 	// Start the server
-	log.Println("Server running on port 8080")
-	http.ListenAndServe("10.12.108.251:8080", handler)
+	fmt.Println("Please enter the IP of the server: ")
+	var ip string
+	fmt.Scan(&ip)
+	ip = ip + ":8080"
+	fmt.Println("Running server on: ", ip)
+	http.ListenAndServe(":8080", handler)
 }
 
 func loginHandler(w http.ResponseWriter, r *http.Request) {
@@ -123,7 +128,6 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	collection := client.Database("mainDB").Collection("users")
 	var result User
 	err = collection.FindOne(context.TODO(), bson.M{"email": creds.Email, "password": creds.Password}).Decode(&result)
-
 	if err != nil {
 		log.Println("User not found or incorrect password:", err)
 		http.Error(w, "Invalid credentials", http.StatusUnauthorized)
