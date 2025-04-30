@@ -10,13 +10,14 @@ interface Profile {
   designation: string;
   id_number: string;
 }
+export const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
 export default function StudentProfile() {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:8080/admin/profile", { credentials: "include" })
+    fetch(`${baseUrl}/admin/profile`, { credentials: "include" })
       .then((res) => res.json())
       .then((data: Profile) => {
         setProfile(data);
@@ -51,7 +52,7 @@ export default function StudentProfile() {
       {/* Button Right for Logout*/}
       <button
       onClick={async () => {
-        const res = await fetch("http://localhost:8080/logout", {
+        const res = await fetch(`${baseUrl}/logout`, {
           method: "POST",
           credentials: "include",
         });

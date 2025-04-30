@@ -12,6 +12,7 @@ interface Post {
   title: string;
   description: string;
 }
+export const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
 export default function StudentCommunity() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -27,7 +28,7 @@ export default function StudentCommunity() {
     setLoading(true);
 
     try {
-      const res = await axios.get(`http://localhost:8080/student/ra?page=${page}&limit=10`);
+      const res = await axios.get(`${baseUrl}/student/ra?page=${page}&limit=10`);
       if (!Array.isArray(res.data) || res.data.length === 0) {
         setHasMore(false);
       } else {
@@ -70,7 +71,7 @@ export default function StudentCommunity() {
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`http://localhost:8080/admin/delete-post`, {
+      const res = await fetch(`${baseUrl}/admin/delete-post`, {
         method: "DELETE",
         credentials: "include",
         headers: {
