@@ -82,7 +82,7 @@ export default function PosterProfile() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ _id: postId, database }),
+        body: JSON.stringify({ id: postId, database }),
       });
 
       if (res.ok) {
@@ -105,10 +105,12 @@ export default function PosterProfile() {
       </header>
 
       <nav className="bg-blue-900 text-white py-3 px-4 w-full flex space-x-6 justify-center">
+        <div className="max-w-5xl mx-auto flex justify-center space-x-6 text-sm font-medium">
         <Link href="/poster/community" className="hover:underline">Student Community</Link>
         <Link href="/poster/ra" className="hover:underline">RA Opportunities</Link>
         <Link href="/poster/internships" className="hover:underline">Internships</Link>
         <Link href="/poster/hatchery" className="hover:underline">Bennett Hatchery</Link>
+        </div>
       </nav>
 
       <main className="flex-grow flex flex-col items-center justify-center p-6 w-full">

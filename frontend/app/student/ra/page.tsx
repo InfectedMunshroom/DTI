@@ -110,7 +110,7 @@ export default function ResearchAssistantOpenings() {
           {posts.map((post, index) => {
             if (!post._id) return null;
             return (
-              <Link key={post._id} href={`/poster/ra/event/${post._id}`}>
+              <Link key={post._id} href={`/student/ra/event/${post._id}`}>
                 <div
                   ref={index === posts.length - 1 ? lastPostRef : null}
                   className="relative border border-blue-200 bg-white p-6 rounded-2xl shadow hover:shadow-lg transition cursor-pointer hover:bg-blue-50"

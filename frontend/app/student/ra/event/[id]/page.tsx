@@ -86,7 +86,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
             <button
               onClick={async () => {
                 try {
-                  await axios.post(`http://localhost:8080/increment-counter/${event._id}`);
+                  await axios.post(`${baseUrl}/increment-counter/${event._id}`);
                   alert("✅ Application submitted successfully!");
                 } catch (error) {
                   console.error("Error applying:", error);
