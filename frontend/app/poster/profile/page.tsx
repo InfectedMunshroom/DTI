@@ -21,6 +21,7 @@ interface Post {
   database?: string;
   application_counter?: number;
 }
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
 export default function PosterProfile() {
   const [profile, setProfile] = useState<Profile | null>(null);
@@ -30,7 +31,7 @@ export default function PosterProfile() {
 
   const fetchPosts = (email: string) => {
     setPostsLoading(true);
-    fetch(`http://localhost:8080/poster/my-posts?email=${encodeURIComponent(email)}`, {
+    fetch(`${baseUrl}/poster/my-posts?email=${encodeURIComponent(email)}`, {
       credentials: "include",
     })
       .then((res) => res.json())
@@ -52,7 +53,7 @@ export default function PosterProfile() {
   };
 
   useEffect(() => {
-    fetch("http://localhost:8080/poster/profile", { credentials: "include" })
+    fetch(`${baseUrl}/poster/profile`, { credentials: "include" })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to fetch profile");
         return res.json();
@@ -75,7 +76,7 @@ export default function PosterProfile() {
     if (!confirmDelete) return;
 
     try {
-      const res = await fetch(`http://localhost:8080/poster/delete-post`, {
+      const res = await fetch(`${baseUrl}/poster/delete-post`, {
         method: "DELETE",
         credentials: "include",
         headers: {

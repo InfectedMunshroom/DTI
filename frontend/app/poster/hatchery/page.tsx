@@ -12,6 +12,7 @@ interface Post {
   title: string;
   description: string;
 }
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
 export default function StudentCommunity() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -27,7 +28,7 @@ export default function StudentCommunity() {
     setLoading(true);
 
     try {
-      const res = await axios.get(`http://localhost:8080/student/hatchery?page=${page}&limit=10`);
+      const res = await axios.get(`${baseUrl}/student/hatchery?page=${page}&limit=10`);
 
       if (!Array.isArray(res.data) || res.data.length === 0) {
         setHasMore(false);

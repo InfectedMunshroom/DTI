@@ -13,6 +13,7 @@ const applicants = [
     hasCV: true,
   },
 ];
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
 export default function ViewApplications() {
   const { id } = useParams();
@@ -47,7 +48,7 @@ export default function ViewApplications() {
             <p className="text-gray-800">💼 Skills: {applicant.skills}</p>
             {applicant.hasCV ? (
               <a
-                href={`http://localhost:8080/student/get-cv?id=67ea94e523f756cb3001337b`}
+                href={`${baseUrl}/student/get-cv?id=67ea94e523f756cb3001337b`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-block mt-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition"

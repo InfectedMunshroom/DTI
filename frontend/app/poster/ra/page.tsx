@@ -12,6 +12,7 @@ interface Post {
   title: string;
   description: string;
 }
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
 export default function ResearchAssistantOpenings() {
   const [posts, setPosts] = useState<Post[]>([]);
@@ -28,7 +29,7 @@ export default function ResearchAssistantOpenings() {
 
     try {
       const res = await axios.get(
-        `http://localhost:8080/student/ra?page=${page}&limit=10`
+        `${baseUrl}/student/ra?page=${page}&limit=10`
       );
 
       console.log("API Response:", res.data);

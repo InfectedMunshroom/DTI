@@ -10,6 +10,7 @@ export default function CreatePost() {
   const [category, setCategory] = useState("researchPage");
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
+  const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,7 +18,7 @@ export default function CreatePost() {
     setMessage("");
 
     try {
-      const response = await fetch("http://localhost:8080/poster/create-post", {
+      const response = await fetch(`${baseUrl}/poster/create-post`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

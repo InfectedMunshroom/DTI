@@ -12,6 +12,7 @@ interface EventDetails {
   title: string;
   description: string;
 }
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL!;
 
 export default function EventPage({ params }: { params: { id: string } }) {
   const { id } = params;
@@ -25,7 +26,7 @@ export default function EventPage({ params }: { params: { id: string } }) {
     const fetchEvent = async () => {
       try {
         const res = await axios.get(
-          `http://localhost:8080/student/ra/event/${id}`
+          `${baseUrl}/student/ra/event/${id}`
         );
         if (res.status === 200) {
           setEvent(res.data);
